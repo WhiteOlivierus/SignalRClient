@@ -3,8 +3,8 @@
 /* tslint:disable */
 // @ts-nocheck
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
-import type { IChatHub, IChatReceiver } from './SignalRClient.Api';
-import type { Message } from '../SignalRClient.Api';
+import type { IChatHub, IChatReceiver } from './SignalRClient.Shared';
+import type { Message } from '../SignalRClient.Shared';
 
 
 // components
@@ -80,16 +80,16 @@ class IChatHub_HubProxy implements IChatHub {
     public constructor(private connection: HubConnection) {
     }
 
+    public readonly getParticipants = async (): Promise<string[]> => {
+        return await this.connection.invoke("GetParticipants");
+    }
+
     public readonly join = async (username: string): Promise<void> => {
         return await this.connection.invoke("Join", username);
     }
 
     public readonly leave = async (): Promise<void> => {
         return await this.connection.invoke("Leave");
-    }
-
-    public readonly getParticipants = async (): Promise<string[]> => {
-        return await this.connection.invoke("GetParticipants");
     }
 
     public readonly sendMessage = async (message: string): Promise<void> => {
@@ -109,18 +109,18 @@ class IChatReceiver_Binder implements ReceiverRegister<IChatReceiver> {
 
     public readonly register = (connection: HubConnection, receiver: IChatReceiver): Disposable => {
 
-        const __onReceiveMessage = (...args: [Message]) => receiver.onReceiveMessage(...args);
-        const __onLeave = (...args: [string, (Date | string)]) => receiver.onLeave(...args);
         const __onJoin = (...args: [string, (Date | string)]) => receiver.onJoin(...args);
+        const __onLeave = (...args: [string, (Date | string)]) => receiver.onLeave(...args);
+        const __onReceiveMessage = (...args: [Message]) => receiver.onReceiveMessage(...args);
 
-        connection.on("OnReceiveMessage", __onReceiveMessage);
-        connection.on("OnLeave", __onLeave);
         connection.on("OnJoin", __onJoin);
+        connection.on("OnLeave", __onLeave);
+        connection.on("OnReceiveMessage", __onReceiveMessage);
 
         const methodList: ReceiverMethod[] = [
-            { methodName: "OnReceiveMessage", method: __onReceiveMessage },
+            { methodName: "OnJoin", method: __onJoin },
             { methodName: "OnLeave", method: __onLeave },
-            { methodName: "OnJoin", method: __onJoin }
+            { methodName: "OnReceiveMessage", method: __onReceiveMessage }
         ]
 
         return new ReceiverMethodSubscription(connection, methodList);

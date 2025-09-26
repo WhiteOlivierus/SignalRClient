@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+
+		<UnityDestination>..\SignalRClient.Unity\Assets\Plugins\SignalRClient</UnityDestination>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Tapper.Analyzer" Version="1.13.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="TypedSignalR.Client.TypeScript.Analyzer" Version="1.15.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="TypedSignalR.Client.TypeScript.Attributes" Version="1.15.0" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	</PropertyGroup>
+
+	<Target Name="TypescriptSignalRClient" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tsrts --project $(MSBuildProjectFile) --output ../SignalRClient-frontend/src/generated" />
+	</Target>
+
+	<Target Name="UnitySignalRClient" AfterTargets="PostBuildEvent" Condition="'$(UnityDestination)' != '' and Exists('$(TargetPath)')">
+		<MakeDir Directories="$(UnityDestination)" Condition="!Exists('$(UnityDestination)')" />
+		<Message Text="Copying $(TargetPath) -&gt; $(UnityDestination)" Importance="High" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(UnityDestination)" SkipUnchangedFiles="true" />
+	</Target>
+
+</Project>

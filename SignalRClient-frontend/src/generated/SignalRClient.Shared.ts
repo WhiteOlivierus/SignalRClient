@@ -2,7 +2,7 @@
 /* eslint-disable */
 /* tslint:disable */
 
-/** Transpiled from SignalRClient.Api.Message */
+/** Transpiled from SignalRClient.Shared.Message */
 export type Message = {
     /** Transpiled from string */
     username: string;

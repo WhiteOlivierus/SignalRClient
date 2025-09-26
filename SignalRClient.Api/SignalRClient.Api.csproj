@@ -18,12 +18,8 @@
 		<PackageReference Include="TypedSignalR.Client.TypeScript.Attributes" Version="1.15.0" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	</PropertyGroup>
-
-	<Target Name="SignalRClient" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
-		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tsrts --project SignalRClient.Api.csproj --output ../SignalRClient-frontend/src/generated" />
-	</Target>
+	<ItemGroup>
+		<ProjectReference Include="..\SignalRClient.Shared\SignalRClient.Shared.csproj" />
+	</ItemGroup>
 
 </Project>

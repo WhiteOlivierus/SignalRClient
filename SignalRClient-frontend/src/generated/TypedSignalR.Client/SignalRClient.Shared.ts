@@ -3,9 +3,13 @@
 /* tslint:disable */
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
-import type { Message } from '../SignalRClient.Api';
+import type { Message } from '../SignalRClient.Shared';
 
 export type IChatHub = {
+    /**
+    * @returns Transpiled from System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
+    */
+    getParticipants(): Promise<string[]>;
     /**
     * @param username Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task
@@ -16,10 +20,6 @@ export type IChatHub = {
     */
     leave(): Promise<void>;
     /**
-    * @returns Transpiled from System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-    */
-    getParticipants(): Promise<string[]>;
-    /**
     * @param message Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task
     */
@@ -28,10 +28,11 @@ export type IChatHub = {
 
 export type IChatReceiver = {
     /**
-    * @param message Transpiled from SignalRClient.Api.Message
+    * @param username Transpiled from string
+    * @param dateTime Transpiled from System.DateTime
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    onReceiveMessage(message: Message): Promise<void>;
+    onJoin(username: string, dateTime: (Date | string)): Promise<void>;
     /**
     * @param username Transpiled from string
     * @param dateTime Transpiled from System.DateTime
@@ -39,10 +40,9 @@ export type IChatReceiver = {
     */
     onLeave(username: string, dateTime: (Date | string)): Promise<void>;
     /**
-    * @param username Transpiled from string
-    * @param dateTime Transpiled from System.DateTime
+    * @param message Transpiled from SignalRClient.Shared.Message
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    onJoin(username: string, dateTime: (Date | string)): Promise<void>;
+    onReceiveMessage(message: Message): Promise<void>;
 }
 
